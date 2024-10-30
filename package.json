@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.3",
+    "@react-native-async-storage/async-storage": "1.17.11",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "@realm/react": "^0.4.3",
@@ -22,6 +23,7 @@
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
+    "expo-task-manager": "~11.1.1",
     "expo-web-browser": "~12.1.1",
     "ignite-rn-07-ignite-fleet": "file:",
     "phosphor-react-native": "^1.1.2",
@@ -34,9 +36,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
     "realm": "^11.8.0",
-    "styled-components": "^5.3.9",
-    "expo-task-manager": "~11.1.1",
-    "@react-native-async-storage/async-storage": "1.17.11"
+    "styled-components": "^5.3.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

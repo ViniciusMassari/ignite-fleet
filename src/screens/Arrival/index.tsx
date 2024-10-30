@@ -21,7 +21,11 @@ import {
 import { Historic } from '../../libs/realm/schemas/Historic';
 import { useObject, useRealm } from '../../libs/realm';
 import { getLastAsyncTimestamp } from '../../libs/asyncStorage/syncStorage';
+import { getStorageLocations } from '../../libs/asyncStorage/locationStorage';
 import { stopLocationTask } from '../../tasks/backgroundLocationTask';
+
+import { LatLng } from 'react-native-maps';
+import { Map } from '../../components/Map';
 
 type RouteParamProps = {
   id: string;
@@ -29,6 +33,7 @@ type RouteParamProps = {
 
 export function Arrival() {
   const [dataNotSynced, setDataNotSynced] = useState(false);
+  const [coordinates, setCoordinates] = useState<LatLng[]>([]);
 
   const route = useRoute();
   const { id } = route.params as RouteParamProps;
@@ -46,10 +51,12 @@ export function Arrival() {
     ]);
   }
 
-  function removeVehicleUsage() {
+  async function removeVehicleUsage() {
     realm.write(() => {
       realm.delete(historic);
     });
+
+    await stopLocationTask();
 
     goBack();
   }
@@ -70,6 +77,8 @@ export function Arrival() {
         historic.updated_at = new Date();
       });
 
+      await stopLocationTask();
+
       Alert.alert('Chegada', 'Chegada registrada com sucesso.');
       goBack();
     } catch (error) {
@@ -77,15 +86,26 @@ export function Arrival() {
     }
   }
 
+  async function getLocationsInfo() {
+    if (!historic) {
+      return;
+    }
+    const lastSync = await getLastAsyncTimestamp();
+    const updatedAt = historic!.updated_at.getTime();
+    setDataNotSynced(updatedAt > lastSync);
+
+    const locationsStorage = await getStorageLocations();
+    setCoordinates(locationsStorage);
+  }
+
   useEffect(() => {
-    getLastAsyncTimestamp().then((lastSync) =>
-      setDataNotSynced(historic!.updated_at.getTime() > lastSync)
-    );
-  }, []);
+    getLocationsInfo();
+  }, [historic]);
 
   return (
     <Container>
       <Header title={title} />
+      {coordinates.length > 0 && <Map coordinates={coordinates} />}
       <Content>
         <Label>Placa do veículo</Label>
 
